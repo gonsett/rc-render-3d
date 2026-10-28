@@ -1,0 +1,30 @@
+name: ep_joe
+on:
+  workflow_dispatch:
+    inputs:
+      pct: {default: "25"}
+      muestras: {default: "4"}
+      escena: {default: "escena_joe_pack.blend"}
+jobs:
+  tramo:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        t: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Blender y escena
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          curl -sL https://download.blender.org/release/Blender4.5/blender-4.5.9-linux-x64.tar.xz | tar xJ &
+          gh release download ep-joe -p "${{ inputs.escena }}" -R ${{ github.repository }}
+          wait
+      - name: Render
+        run: |
+          ./blender-4.5.9-linux-x64/blender -b ${{ inputs.escena }} -P render_joe.py -- ${{ matrix.t }} 20 "$PWD/out" ${{ inputs.pct }} ${{ inputs.muestras }} 2>&1 | grep -E "CUADRO|rror"; ls out | wc -l
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tramo-${{ matrix.t }}
+          path: out/*.png
