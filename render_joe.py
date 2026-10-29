@@ -9,6 +9,7 @@ sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'; sc.cycles.samples = muest
 sc.render.use_persistent_data = True; sc.render.resolution_percentage = pct
 sc.render.image_settings.file_format = 'PNG'
 os.makedirs(out, exist_ok=True)
-for f in range(sc.frame_start + t, sc.frame_end + 1, n):
+lista = [int(x) for x in a[5].split(',')] if len(a) > 5 and a[5].strip() else list(range(sc.frame_start, sc.frame_end + 1))
+for f in lista[t::n]:
     t0 = time.time(); sc.frame_set(f); sc.render.filepath = f"{out}/c{f:04d}.png"
     bpy.ops.render.render(write_still=True); print("CUADRO", f, round(time.time() - t0, 1), flush=True)
