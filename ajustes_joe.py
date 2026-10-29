@@ -25,3 +25,13 @@ lo.rotation_euler = (JOE + Vector((0, 0, 1.0)) - lo.location).to_track_quat('-Z'
 lo.light_linking.receiver_collection = col
 sc.cycles.use_denoising = True; sc.cycles.denoiser = 'OPENIMAGEDENOISE'
 print("AJUSTES OK", tuple(round(v, 2) for v in JOE), len(col.objects))
+# foco que sigue los ojos en los primeros planos (cara y silencio): Empty colgado del hueso de la cabeza
+from mathutils import Matrix
+sc.frame_set(60); dg = bpy.context.evaluated_depsgraph_get(); dg.update()
+eo = bpy.data.objects['Eyes_Eyes_0'].evaluated_get(dg)
+vs = [eo.matrix_world @ v.co for v in eo.data.vertices]; pe = sum(vs, Vector()) / len(vs)
+foco = bpy.data.objects.new('FocoOjos', None); sc.collection.objects.link(foco)
+foco.parent = joe; foco.parent_type = 'BONE'; foco.parent_bone = 'mixamorig:Head'
+bpy.context.view_layer.update(); foco.matrix_world = Matrix.Translation(pe)
+for n in ('C_cara', 'C_silencio'): bpy.data.objects[n].data.dof.focus_object = foco
+print('FOCO', tuple(round(v, 3) for v in pe))
