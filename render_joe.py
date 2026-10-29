@@ -3,7 +3,7 @@ import bpy, sys, time, os
 a = sys.argv[sys.argv.index("--") + 1:]
 t, n, out, pct, muestras = int(a[0]), int(a[1]), a[2], int(a[3]), int(a[4])
 aj = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ajustes_joe.py")
-if os.path.exists(aj): exec(open(aj).read(), {})  # espacio propio: que no pise t, n...
+if os.path.exists(aj) and "C_golpe" in bpy.data.objects: exec(open(aj).read(), {})  # espacio propio: que no pise t, n...
 sc = bpy.context.scene
 sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'; sc.cycles.samples = muestras
 sc.render.use_persistent_data = True; sc.render.resolution_percentage = pct
