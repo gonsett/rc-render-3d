@@ -5,6 +5,7 @@ on:
       pct: {default: "25"}
       muestras: {default: "4"}
       escena: {default: "escena_joe_pack.blend"}
+      cuadros: {default: ""}
 jobs:
   tramo:
     runs-on: ubuntu-latest
@@ -23,7 +24,7 @@ jobs:
           wait
       - name: Render
         run: |
-          ./blender-4.5.9-linux-x64/blender -b ${{ inputs.escena }} -P render_joe.py -- ${{ matrix.t }} 20 "$PWD/out" ${{ inputs.pct }} ${{ inputs.muestras }} 2>&1 | grep -E "CUADRO|rror"; ls out | wc -l
+          ./blender-4.5.9-linux-x64/blender -b ${{ inputs.escena }} -P render_joe.py -- ${{ matrix.t }} 20 "$PWD/out" ${{ inputs.pct }} ${{ inputs.muestras }} "${{ inputs.cuadros }}" 2>&1 | grep -E "CUADRO|rror"; ls out | wc -l
       - uses: actions/upload-artifact@v4
         with:
           name: tramo-${{ matrix.t }}
